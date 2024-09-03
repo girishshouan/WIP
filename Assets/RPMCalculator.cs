@@ -63,89 +63,6 @@ public class RPMCalculator : MonoBehaviour
 
 
 
-    public float CalculateRPM(float delta, Vector3 _head_raw)
-    {
-        time_since_step += delta;
-        if (delta == 0.0f)
-        {
-            delta = 0.001f;
-        }
-
-        //Vector3 head_raw = arCamera.position;
-
-        Vector3 head_raw = _head_raw;
-
-        // Features
-        head = head_raw;
-        head = (1 - RPM_PARAMS["w0"]) * head_prev + RPM_PARAMS["w0"] * head;
-        v = (head - head_prev) / delta;
-        v = (1 - RPM_PARAMS["w1"]) * v_prev + RPM_PARAMS["w1"] * v;
-        vv = (v - v_prev) / delta;
-        vv = (1 - RPM_PARAMS["w2"]) * vv_prev + RPM_PARAMS["w2"] * vv;
-        float mov = v.x;
-
-        if (Mathf.Abs(vv.x) < RPM_PARAMS["t_vv_x"])
-        {
-            mov = 0;
-        }
-
-        // Zero crossing, count as step
-        if ((mov_prev >= 0 && mov < 0) || (mov_prev <= 0 && mov > 0))
-        {
-            float new_rpm = 30 / time_since_step;
-            time_since_step = 0;
-
-            // Too fast outlier detection
-            if (new_rpm > 120 && new_rpm > 1.2f * rpm_prev)
-            {
-                rpm = rpm_prev;
-            }
-            else
-            {
-                time_since_step = 0;
-
-                // Too slow outlier detection
-                if (new_rpm < 0.8f * rpm_prev)
-                {
-                    rpm = rpm_prev;
-                }
-                else
-                {
-                    // Exponential smoothing of RPM to prevent jerky movements
-                    rpm = RPM_PARAMS["w_rpm"] * rpm_prev + (1 - RPM_PARAMS["w_rpm"]) * new_rpm;
-                }
-            }
-        }
-        else
-        {
-            // If the next step comes slower than the last, reduce rpm, otherwise keep it
-            float new_rpm = 30 / time_since_step;
-            if (new_rpm < rpm)
-            {
-                rpm = rpm - RPM_SMOOTHING * delta * rpm;
-            }
-        }
-
-        head_prev = head;
-        v_prev = v;
-        vv_prev = vv;
-        mov_prev = mov;
-        rpm_prev = rpm;
-
-        return rpm;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public float CalculateRPM(float delta, Vector3 left_pos_raw, Vector3 right_pos_raw)
@@ -207,7 +124,7 @@ public class RPMCalculator : MonoBehaviour
                 }
                 else
                 {
-                    // Exponential smoothing of RPM to prevent jerky movements
+                    // Exponential smoothing of RPM
                     rpm = RPM_PARAMS["w_rpm"] * rpm_prev + (1 - RPM_PARAMS["w_rpm"]) * new_rpm;
                 }
             }
@@ -218,6 +135,7 @@ public class RPMCalculator : MonoBehaviour
             float new_rpm = 30 / time_since_step;
             if (new_rpm < rpm)
             {
+                //Exponential decay of rpm to mimic natural slowdown
                 rpm = rpm - RPM_SMOOTHING * delta * rpm;
             }
         }

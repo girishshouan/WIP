@@ -77,12 +77,12 @@ public class WalkingInPlace : MonoBehaviour
 
     void Update()
     {
-        
-        //Debug.Log("WIP_3");
+
         if (fullBodyVisualizerAdapter != null)
         {
             //Transform headTransform = fullBodyVisualizerAdapter.GetBoneTransform(7);
             /*
+                From Body Tracking API specification
                 XR_FULL_BODY_JOINT_LEFT_UPPER_LEG_META = 70,
                 XR_FULL_BODY_JOINT_LEFT_LOWER_LEG_META = 71,
                 XR_FULL_BODY_JOINT_LEFT_FOOT_ANKLE_TWIST_META = 72,
@@ -103,8 +103,6 @@ public class WalkingInPlace : MonoBehaviour
             Transform rightFootTransform = fullBodyVisualizerAdapter.GetBoneTransform(80);
 
 
-            //if (headTransform != null && leftFootTransform != null && rightFootTransform != null)
-            //if (headTransform!= null)
             if (leftFootTransform != null && rightFootTransform != null)
             {
                 float rpm = rpmCalculator.CalculateRPM(Time.deltaTime, leftFootTransform.position, rightFootTransform.position);
