@@ -11,3 +11,5 @@ Steps to use this repository
 7. Switch the platform to Android
 8. Connect your Quest 2, and select it from the Run Device dropdown.
 9. Select Build and Run
+
+Note - The step detection algorithm is located in Assets/RPMCalcultor.cs and the steps to movement mapping logic is in Assets/WalkingInPlace.cs.
